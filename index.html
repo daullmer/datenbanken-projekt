@@ -3,11 +3,23 @@
     <head>
         <title>Datenbanken</title>
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
+        <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css" type="text/css">
         <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
         <link rel="stylesheet" href="/css/main.css">
+
+        <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+        <script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
+    
+        <!-- Include this library for mobile touch support  -->
+        <script src="http://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.2/jquery.ui.touch-punch.min.js"></script>
+
+
+        <script type="text/javascript" src="/script/SliderControl.js"></script>
     </head>
 
     <body>
+		<label for="dateofbirth">Date</label>
+        <div id = "dateofbirth"><input type="date" id="datepicker" value="2015-01-01"></div>
         <div id="map" class="map"></div>
         <script type="text/javascript" src="/script/main.js"></script>
     </body>

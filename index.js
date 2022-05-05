@@ -42,15 +42,33 @@ app.get('/all_bikes', async function(req, res){
 });
 
 app.get('/locations/:bikeId', async function(req, res){
+    const sort = {
+        'items.date.year': 1, 
+        'items.date.month': 1, 
+        'items.date.day': 1, 
+        'items.date.hour': 1, 
+        'items.date.minute': 1, 
+        'items.date.second': 1
+      };
+
     console.log(`Getting all locations for bike with id ${req.params.bikeId}`);
     const bikes_loc = database.collection('bikeid_locations');
     var locations = await bikes_loc.findOne({
         '_id': parseInt(req.params.bikeId)
-      });
+      }, {sort: sort});
     res.send(locations);
 });
 
 app.get('/dates/:year/:month/:day/:hour', async function(req, res){
+    const sort = {
+    'items.date.year': 1, 
+    'items.date.month': 1, 
+    'items.date.day': 1, 
+    'items.date.hour': 1, 
+    'items.date.minute': 1, 
+    'items.date.second': 1
+  };
+
     var year = parseInt(req.params.year);
     var month = parseInt(req.params.month);
     var day = parseInt(req.params.day);
@@ -62,6 +80,11 @@ app.get('/dates/:year/:month/:day/:hour', async function(req, res){
         '_id.date.month': month, 
         '_id.date.day': day, 
         '_id.date.hour': hour
-    });
+    }, {sort: sort});
+
+    if (locations == null) {
+        res.status(401);
+    }
+
     res.send(locations);
 });
