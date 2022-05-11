@@ -18,8 +18,15 @@
     </head>
 
     <body>
-		<label for="dateofbirth">Date</label>
-        <div id = "dateofbirth"><input type="date" id="datepicker" value="2015-01-01"></div>
+        <div class="input-container">
+            <label for="datepicker">Datum:</label>
+            <input type="date" id="datepicker" value="2015-01-01" min="2015-01-01" max="2015-03-31">
+
+            <label for="hour">Uhrzeit:</label>
+            <input type="number" id="hour" value="14" min="0" max="24" style="width: 60px;">
+
+            <p>Wenn sich in dieser Stunde keine Fahrräder bewegt haben, gibt es keine Daten</p>
+        </div>
         <div id="map" class="map"></div>
         <script type="text/javascript" src="/script/main.js"></script>
     </body>

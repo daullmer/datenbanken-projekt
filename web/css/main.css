@@ -8,11 +8,14 @@ html, body {
     width: 100vw;
     cursor:default;
 }
-#dateofbirth {
-	height: 5vh;
-    width: 100vw;
-    cursor:default;
+
+.input-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
 }
+
 [type="date"] {
 	background:#fff url(https://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/calendar_2.png)  97% 50% no-repeat ;
   }

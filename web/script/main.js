@@ -1,13 +1,18 @@
 let map = L.map('map').setView([42.361145, -71.057083], 13);
 const hostname = "http://localhost:6001"
 
-$("#datepicker").change(function() {
+$("#datepicker").change(loadBikes);
+
+$("#hour").change(loadBikes);
+
+function loadBikes() {
     val = $("#datepicker").val().split("-");
     year = val[0];
     month = val[1];
     day = val[2];
-    loadBikesInMap(year, month, day, 14);
-});
+    hour = parseInt($("#hour").val())
+    loadBikesInMap(year, month, day, hour);
+}
 
 var sliderControl = null;
 var layerGroup = null;
