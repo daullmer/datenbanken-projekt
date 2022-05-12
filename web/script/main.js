@@ -5,6 +5,8 @@ $("#datepicker").change(loadBikes);
 
 $("#hour").change(loadBikes);
 
+$("#bike_selector").change(loadMapByBikes);
+
 function loadBikes() {
     val = $("#datepicker").val().split("-");
     year = val[0];
@@ -12,6 +14,10 @@ function loadBikes() {
     day = val[2];
     hour = parseInt($("#hour").val())
     loadBikesInMap(year, month, day, hour);
+}
+
+function loadMapByBikes() {
+    allLocsForBike($("#bike_selector option:selected").text());
 }
 
 var sliderControl = null;
@@ -23,7 +29,7 @@ function custom_sort(a, b) {
     return new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime();
 }
 
-function loadBikesInMap(year, month, date, hour) {
+function cleanSlider() {
     if(sliderControl != null){
 	    // sliderControl.onRemove();
         sliders = $('.slider');
@@ -38,39 +44,54 @@ function loadBikesInMap(year, month, date, hour) {
         }
            
     });
+}
+
+function addBikes(locations) {
+    markers = [];
+    const icon = L.icon({
+        iconUrl: "https://upload.wikimedia.org/wikipedia/commons/5/5b/Fahrrad.png",
+        iconSize: [50, 50]
+    });
+        
+    for (let i = 0; i < locations.length; i++) {
+        const location = locations[i];
+        date = location.date;
+        marker = L.marker([location.lat, location.long], {icon: icon, time: location.timestamp}).addTo(map).bindPopup(`
+        <b>Fahrrad ${location.bikeid}</b><br>
+        ${location.date.day}.${location.date.month}.${location.date.year} um ${location.date.hour}:${location.date.minute}:${location.date.second} Uhr<br>
+        `);
+        
+        markers.push(marker);
+    }
+
+    layerGroup = L.layerGroup(markers);
+    sliderControl = L.control.sliderControl({layer:layerGroup});
+    map.addControl(sliderControl);
+    sliderControl.startSlider();
+}
+
+function loadBikesInMap(year, month, date, hour) {
+    cleanSlider();
     getBikeByTimestamp(year, month, date, hour).then((bikesJson) => {
         if (bikesJson == null) {
             return;
         }
         locations = bikesJson['items'].sort(custom_sort);
-			
-        markers = [];
-        const icon = L.icon({
-            iconUrl: "https://upload.wikimedia.org/wikipedia/commons/5/5b/Fahrrad.png",
-            iconSize: [50, 50]
-        });
-        
-        for (let i = 0; i < locations.length; i++) {
-            const location = locations[i];
 
-            date = location.date;
-            marker = L.marker([location.lat, location.long], {icon: icon, time: location.timestamp}).addTo(map).bindPopup(`
-            <b>Fahrrad ${location.bikeid}</b><br>
-            ${location.date.day}.${location.date.month}.${location.date.year} um ${location.date.hour}:${location.date.minute}:${location.date.second} Uhr<br>
-            `);
-            
-            markers.push(marker);
-        }
-
-        layerGroup = L.layerGroup(markers);
-        sliderControl = L.control.sliderControl({layer:layerGroup});
-        map.addControl(sliderControl);
-        sliderControl.startSlider();
+        addBikes(locations);
     });
 }
 
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', async function () {
     loadBikesInMap(2015, 1, 1, 14);
+    var bikes = await getBikes();
+    selector = $('#bike_selector')
+    $.each(bikes, function(key, value) {   
+        selector
+            .append($("<option></option>")
+                       .attr("value", key)
+                       .text(value));
+   });
 }, false);
 
 async function getBikes() {  
@@ -92,3 +113,10 @@ async function getBikeByTimestamp(year, month, day, hour) {
     return response.json();
 }
 
+function allLocsForBike(bikeid) {
+    cleanSlider();
+    getBikeById(bikeid).then((bikesJson) => {
+        locations = bikesJson['items'].sort(custom_sort);
+        addBikes(locations);
+    })
+}
