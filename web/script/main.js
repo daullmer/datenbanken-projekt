@@ -20,11 +20,15 @@ function loadMapByBikes() {
     allLocsForBike($("#bike_selector option:selected").text());
 }
 
+// Slider to select Timestamps
 var sliderControl = null;
 var layerGroup = null;
 
 var titleLayer = L.tileLayer('http://a.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png').addTo(map);
 
+/**
+ * Function to sort the data by date 
+ */
 function custom_sort(a, b) {
     return new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime();
 }
@@ -37,7 +41,7 @@ function cleanSlider() {
             sliders[i].remove();
         }
     }
-
+	// Remove the previously shown bikes when loading new ones
     map.eachLayer(function (layer) {
         if (layer != titleLayer) {
             map.removeLayer(layer);
@@ -45,7 +49,7 @@ function cleanSlider() {
            
     });
 }
-
+// Add bikes to the Map at requesrted location and add the slider 
 function addBikes(locations) {
     markers = [];
     const icon = L.icon({
@@ -70,6 +74,7 @@ function addBikes(locations) {
     sliderControl.startSlider();
 }
 
+// get Bike locations with requested Timestamp and have them added to the Map by addBikes(locations)
 function loadBikesInMap(year, month, date, hour) {
     cleanSlider();
     getBikeByTimestamp(year, month, date, hour).then((bikesJson) => {
@@ -94,16 +99,23 @@ document.addEventListener('DOMContentLoaded', async function () {
    });
 }, false);
 
+/**
+ * Function call Database from Server for all availavle Bikes  
+ */
 async function getBikes() {  
     const response = await fetch(hostname + "/all_bikes");
     return response.json()
 }
-
+/**
+ * Function call Database from Server for all availavle Bikes with requested ID
+ */
 async function getBikeById(id) {
     const response = await fetch(hostname + "/locations/" + id);
     return response.json()
 }
-
+/**
+ * Function call Database from Server for all bikes with requested timestamp  
+ */
 async function getBikeByTimestamp(year, month, day, hour) {
     const response = await fetch(`${hostname}/dates/${year}/${month}/${day}/${hour}`);
     if (response.status != 200) {

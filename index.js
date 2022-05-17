@@ -17,7 +17,9 @@ var app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-
+/**
+ * Add Header to be able to make calls from the webserver to the REST API
+ */
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -35,12 +37,18 @@ app.get('/', function (req, res) {
     res.sendFile(__dirname + '/index.html');
 });
 
+/**
+ *  HTTP GET call to get all available Bikes
+ */
 app.get('/all_bikes', async function(req, res){
     console.log("Getting available bikeIds");
     var ids = await (await bikes.distinct('bikeid')).sort((a,b) => a - b);
     res.send(ids);
 });
 
+/**
+ * HTTP GET call to get  all locations for bike with requested ID
+ */
 app.get('/locations/:bikeId', async function(req, res){
     const sort = {
         'items.date.year': 1, 
@@ -59,6 +67,9 @@ app.get('/locations/:bikeId', async function(req, res){
     res.send(locations);
 });
 
+/**
+ * HTTP GET call to get all bikes with requested timestamp
+ */
 app.get('/dates/:year/:month/:day/:hour', async function(req, res){
     const sort = {
     'items.date.year': 1, 
